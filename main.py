@@ -1,5 +1,7 @@
 import pygame
 import random
+import tkinter
+from tkinter import *
 
 # window params
 width = 1000
@@ -76,8 +78,8 @@ def enqueue(val):
         first = False
         ct = cost(val)
         hu = huristic(val)
-        # if ct > hu:
-        # ct = 0.01*(abs(ct - hu)) * ct
+        if ct > hu:
+            ct = 0.01*(abs(ct - hu)) * ct
         opened.append([hu, val])
 
 
@@ -212,21 +214,67 @@ def setup_obstacles():
                 status_matrix[x][y + i] = 1
 
 
+menu = None
+window = None
+
+
+def setup():
+    global window
+    a = 3
+    val = menu.get()
+    if val == 'Very Easy':
+        a = 1
+    elif val == 'Tough':
+        a = 4
+    elif val == 'Easy':
+        a = 2
+    elif val == 'Medium':
+        a = 3
+    window.destroy()
+    init(a, (int(0), int(0)))
+
+
+def config():
+    global menu
+    global window
+    window = Tk()
+    window.title("Configure Maze!")
+    window.configure(bg='black')
+    canvas = tkinter.Canvas(window, width=500, height=500)
+    canvas.pack()
+    menu = StringVar()
+    menu.set("Select Difficulty")
+    drop = OptionMenu(canvas, menu, "Very Easy", "Easy", "Medium", "Tough")
+    drop.pack()
+    btn = Button(window, text="Start simulation", command=setup)
+    btn.pack()
+    window.configure(width=500, height=500)
+    window.mainloop()
+
+
 def main():
 
     global running
     global found
     global screen
     global cp
-    size = input("Enter Difficulty Level: ")
-    x = input("Enter initial X: ")
-    y = input("Enter inital Y: ")
-    init(size, (int(x), int(y)))
+    config()
+    # size = input("Enter difficulty (1 - 4) : ")
+    # x = input("Enter init x : ")
+    # y = input("Enter init y : ")
+    # init(size, (int(x), int(y)))
     setup_obstacles()
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_r:
+                    pygame.quit()
+                    main()
+                if event.key == pygame.K_q:
+                    pygame.quit()
+                    exit(0)
 
         screen.fill((0, 0, 0))
         fill = False
