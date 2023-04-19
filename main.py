@@ -27,7 +27,7 @@ running = True  # Main Loop Controller
 opened = []
 closed = []
 first = True
-w = 0.5  # Huristic Obstacle Wieght
+w = 0.8  # Huristic Obstacle Wieght
 inip = (0, 0)
 cp = (0, 0)  # starting position
 
@@ -78,8 +78,6 @@ def enqueue(val):
         first = False
         ct = cost(val)
         hu = huristic(val)
-        if ct > hu:
-            ct = 0.01*(abs(ct - hu)) * ct
         opened.append([hu, val])
 
 
@@ -105,7 +103,7 @@ def cost(cur_pos):
             if sl[i][j] == 2:
                 obstacles += 1
     a = abs(cur_pos[0] - inip[0])**2 + abs(cur_pos[1] - inip[1])**2
-    return a - obstacles * w
+    return a - obstacles * w * 3
 
 
 def huristic(cur_pos):
@@ -192,6 +190,7 @@ def init(size, initPos):
     status_matrix[cp[0]][cp[1]] = 2    # Starting
     status_matrix[-1][-1] = 3  # Goal
     pygame.init()
+    pygame.display.set_caption('Simulation')
     screen = pygame.display.set_mode([width, height])
 
 
@@ -283,7 +282,7 @@ def main():
             cp = astar(cp)
         if cp == (-1, -1):
             highlight_path()
-            print("OVER!")
+            # print("OVER!")
         k = 0
         m = 0
 
